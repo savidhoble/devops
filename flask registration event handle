@@ -1,0 +1,85 @@
+1. Build Docker Image:
+
+docker build -t flask-event-app 
+
+ Method 2: Rename Using Command Prompt  
+
+cd Desktop\flask_event_registration
+ren Dockerfile.txt Dockerfile
+
+
+2. Run Container:
+
+docker run -p 5000:5000 flask-event-app
+
+3. Open in Browser:
+
+Go to: http://localhost:5000
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+flask_event_registration/
+│
+├── app.py
+├── requirements.txt
+├── Dockerfile
+└── templates/
+    └── register.html
+--------------------------------------------------------------------
+app.py
+
+from flask import Flask, render_template, request
+
+app = Flask(__name__)
+
+@app.route('/', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        name = request.form.get('name')
+        email = request.form.get('email')
+        return f"Thank you, {name}! You have registered with email: {email}"
+    return render_template('register.html')
+
+if __name__ == "__main__":
+    app.run(host='0.0.0.0', port=5000)
+-------------------------------------------------------------------------
+templates/register.html
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Event Registration</title>
+</head>
+<body>
+    <h2>Register for the Event</h2>
+    <form method="POST">
+        <label>Name:</label><br>
+        <input type="text" name="name" required><br>
+        <label>Email:</label><br>
+        <input type="email" name="email" required><br><br>
+        <input type="submit" value="Register">
+    </form>
+</body>
+</html>
+-------------------------------------------------------------------------------
+requirements.txt
+Flask==2.3.2
+------------------------------------------------------------------------
+Dockerfile 
+
+# Use a lightweight Python image
+FROM python:3.10-slim
+
+# Set working directory in container
+WORKDIR /app
+
+# Copy dependency file and install dependencies
+COPY requirements.txt requirements.txt
+RUN pip install -r requirements.txt
+
+# Copy the rest of the app
+COPY . .
+
+# Run the Flask app
+CMD ["python", "app.py"]
+-----------------------------------------------------------------------------------------
+
+
